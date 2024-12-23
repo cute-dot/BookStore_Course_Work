@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head id="managerC">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!--    <link href="../static/css/homestyles.css" th:href="@{/css/homestyles.css}" rel="stylesheet" /></head>-->
+    <link href="../static/css/you.css?v=1" th:href="@{/css/you.css?v=1}" rel="stylesheet" /></head>
+<body>
+
+<!--<header>-->
+<!--    <div class="authorized_User">-->
+<!--        <h1>Пользователь:<span th:text="${username}"></span></h1>-->
+<!--        <button class="logout"><a style="text-decoration: none" href="/logout">Выйти</a></button>-->
+<!--    </div>-->
+<!--</header>-->
+
+<div>
+    <div class="block_menu">
+        <ul class="menu">
+            <li><a href="#" onclick="showSection('bookSection')">Книги</a></li>
+            <li><a href="#" onclick="showSection('orderSection')">Заказы</a></li>
+            <li class="has-submenu">
+                <a href="#">Клиенты</a>
+                <ul class="submenu">
+                    <li><a onclick="showSection('legalSection')" href="#">Юридические лица</a></li>
+                    <li><a onclick="showSection('individualSection')"  href="#">Физические лица</a></li>
+                </ul>
+            </li>
+<!--            <li><a onclick="showSection('supplySection')" href="#">Поставки</a></li>-->
+<!--            <li><a  onclick="showSection('supplierSection')" href="#">Поставщики</a></li>-->
+            <li class="has-submenu">
+                <a href="#">Справочники</a>
+                <ul class="submenu">
+                    <li><a onclick="showSection('citySection')" href="#">Города</a></li>
+                    <li><a onclick="showSection('streetSection')" href="#">Улицы</a></li>
+                    <li><a onclick="showSection('authorSection')" href="#">Авторы</a></li>
+                    <li><a onclick="showSection('publishingHouseSection')" href="#">Издательства</a></li>
+                </ul>
+            </li>
+            <li><a onclick="showSection('sqlConsoleSection')"   href="#">Документы</a></li>
+            <li class="has-submenu">
+                <a href="#">Разное</a>
+                <ul class="submenu">
+                    <li><a onclick="showSection('settingsSection')" href="#">Настройки</a></li>
+                    <li><a onclick="showSection('changePasswordSection')" href="#">Сменить пароль</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#">Справка</a>
+                <ul class="submenu">
+                    <li><a onclick="showSection('spravkaSection')" href="#">Содержание</a></li>
+                    <li><a onclick="showSection('aboutSection')" href="#">О программе</a></li>
+                </ul>
+            </li>
+            <li><a  action="/logout" method="get" href="/logout">Выход</a></li>
+
+
+        </ul>
+
+    </div>
+    <div>
+        <!--Секция Издательств -->
+        <section class="section" id="publishingHouseSection" aria-labelledby="publishingHouseSectionTitle">
+            <header>
+                <h2 id="publishingHouseSectionTitle">Издательства</h2>
+            </header>
+            <div class="buttons">
+                <button id="addPublishingHouseButton" onclick="openModal('addPublishingHouseModal')" aria-label="Добавить Издательство">Добавить</button>
+                <button id="updatePublishingHouseButton" onclick="openModal('updatePublishingHouseModal')" aria-label="Обновить Издательство">Обновить</button>
+                <button id="deletePublishingHouseButton" onclick="openModal('deletePublishingHouseModal')" aria-label="Удалить Издательство">Удалить</button>
+                <button id="searchPublishingHouseButton" aria-label="Поиск Издательства">Поиск</button>
+                <input class="input_butt" type="text" id="searchPublishingHouseInput" placeholder="Введите текст для поиска" aria-label="Поиск">
+            </div>
+            <table class="table-bd" id="publishingHouseTable" aria-describedby="publishingHouseTableDesc">
+                <thead>
+                <tr>
+                    <th class="sortable" data-column="0" data-order="asc">ID</th>
+                    <th class="sortable" data-column="1" data-order="asc">Название</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Данные издательств будут загружены здесь -->
+                </tbody>
+            </table>
+
+            <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+            <!-- Модальное окно для добавления -->
+            <div class="modal" id="addPublishingHouseModal" role="dialog" aria-labelledby="addPublishingHouseModalTitle" aria-modal="true">
+                <span onclick="closeModal('addPublishingHouseModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="addPublishingHouseModalTitle">Добавить Издательство</h2>
+                <form id="addPublishingHouseForm" novalidate>
+                    <fieldset>
+                        <legend>Данные Издательства</legend>
+                        <input type="text" id="addPublishingHouseName" placeholder="Название" required value="АСВТ">
+                        <button type="submit">Добавить</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- Модальное окно для обновления -->
+            <div class="modal" id="updatePublishingHouseModal" role="dialog" aria-labelledby="updatePublishingHouseModalTitle" aria-modal="true">
+                <span onclick="closeModal('updatePublishingHouseModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="updatePublishingHouseModalTitle">Изменить Издательство</h2>
+                <div id="step1_publishingHouse">
+                    <form id="fetchPublishingHouseForm" novalidate>
+                        <input type="number" id="fetchPublishingHouseId" placeholder="Введите ID Издательства" required>
+                        <button type="submit">Загрузить данные</button>
+                    </form>
+                </div>
+                <div id="step2_publishingHouse" style="display: none;">
+                    <form id="updatePublishingHouseForm" novalidate>
+                        <fieldset>
+                            <legend>Данные Издательства</legend>
+                            <input type="text" id="updatePublishingHouseName" placeholder="Название" required>
+                            <button type="submit">Обновить</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Модальное окно для удаления -->
+            <div class="modal" id="deletePublishingHouseModal" role="dialog" aria-labelledby="deletePublishingHouseModalTitle" aria-modal="true">
+                <span onclick="closeModal('deletePublishingHouseModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="deletePublishingHouseModalTitle">Удалить Издательство</h2>
+                <form id="deletePublishingHouseForm" novalidate>
+                    <input type="number" id="deletePublishingHouseId" placeholder="ID Издательства" required>
+                    <button type="submit">Удалить</button>
+                </form>
+            </div>
+        </section>
+
+
+        <!--Секция Авторов-->
+
+        <section class="section" id="authorSection" aria-labelledby="authorSectionTitle">
+            <header>
+                <h2 id="authorSectionTitle">Авторы</h2>
+            </header>
+            <div class="buttons">
+                <button id="addAuthorButton" onclick="openModal('addAuthorModal')" aria-label="Добавить Автора">Добавить</button>
+                <button id="updateAuthorButton" onclick="openModal('updateAuthorModal')" aria-label="Обновить Автора">Обновить</button>
+                <button id="deleteAuthorButton" onclick="openModal('deleteAuthorModal')" aria-label="Удалить Автора">Удалить</button>
+                <button id="searchAuthorButton" aria-label="Поиск Автора">Поиск</button>
+                <input class="input_butt" type="text" id="searchAuthorInput" placeholder="Введите текст для поиска" aria-label="Поиск">
+            </div>
+            <table class="table-bd" id="authorTable" aria-describedby="authorTableDesc">
+                <thead>
+                <tr>
+                    <th class="sortable" data-column="0" data-order="asc">ID</th>
+                    <th class="sortable" data-column="1" data-order="asc">ФИО</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Данные авторов будут загружены здесь -->
+                </tbody>
+            </table>
+
+            <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+            <!-- Модальное окно для добавления -->
+            <div class="modal" id="addAuthorModal" role="dialog" aria-labelledby="addAuthorModalTitle" aria-modal="true">
+                <span onclick="closeModal('addAuthorModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="addAuthorModalTitle">Добавить Автора</h2>
+                <form id="addAuthorForm" novalidate>
+                    <fieldset>
+                        <legend>Данные Автора</legend>
+                        <input type="text" id="addAuthorFirstname" placeholder="Имя" required>
+                        <input type="text" id="addAuthorLastname" placeholder="Фамилия" required>
+                        <input type="text" id="addAuthorSurname" placeholder="Отчество" required>
+                        <button type="submit">Добавить</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- Модальное окно для обновления -->
+            <div class="modal" id="updateAuthorModal" role="dialog" aria-labelledby="updateAuthorModalTitle" aria-modal="true">
+                <span onclick="closeModal('updateAuthorModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="updateAuthorModalTitle">Изменить Автора</h2>
+                <div id="step1_author">
+                    <form id="fetchAuthorForm" novalidate>
+                        <input type="number" id="fetchAuthorId" placeholder="Введите ID Автора" required>
+                        <button type="submit">Загрузить данные</button>
+                    </form>
+                </div>
+                <div id="step2_author" style="display: none;">
+                    <form id="updateAuthorForm" novalidate>
+                        <fieldset>
+                            <legend>Данные Автора</legend>
+                            <input type="text" id="updateAuthorFirstname" placeholder="Имя" required>
+                            <input type="text" id="updateAuthorLastname" placeholder="Фамилия" required>
+                            <input type="text" id="updateAuthorSurname" placeholder="Отчество" required>
+                            <button type="submit">Обновить</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Модальное окно для удаления -->
+            <div class="modal" id="deleteAuthorModal" role="dialog" aria-labelledby="deleteAuthorModalTitle" aria-modal="true">
+                <span onclick="closeModal('deleteAuthorModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="deleteAuthorModalTitle">Удалить Автора</h2>
+                <form id="deleteAuthorForm" novalidate>
+                    <input type="number" id="deleteAuthorId" placeholder="ID Автора" required>
+                    <button type="submit">Удалить</button>
+                </form>
+            </div>
+        </section>
+
+
+        <!--Секция Городов-->
+        <section class="section" id="citySection" aria-labelledby="citySectionTitle">
+            <header>
+                <h2 id="citySectionTitle">Города</h2>
+            </header>
+            <div class="buttons">
+                <button id="addCityButton" onclick="openModal('addCityModal')" aria-label="Добавить Город">Добавить</button>
+                <button id="updateCityButton" onclick="openModal('updateCityModal')" aria-label="Обновить Город">Обновить</button>
+                <button id="deleteCityButton" onclick="openModal('deleteCityModal')" aria-label="Удалить Город">Удалить</button>
+                <button id="searchCityButton" aria-label="Поиск Города">Поиск</button>
+                <input class="input_butt" type="text" id="searchCityInput" placeholder="Введите текст для поиска" aria-label="Поиск">
+            </div>
+            <table class="table-bd" id="cityTable" aria-describedby="cityTableDesc">
+                <thead>
+                <tr>
+                    <th class="sortable" data-column="0" data-order="asc">ID</th>
+                    <th class="sortable" data-column="1" data-order="asc">Название Города</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Данные городов будут загружены здесь -->
+                </tbody>
+            </table>
+
+            <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+            <!-- Модальное окно для добавления -->
+            <div class="modal" id="addCityModal" role="dialog" aria-labelledby="addCityModalTitle" aria-modal="true">
+                <span onclick="closeModal('addCityModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="addCityModalTitle">Добавить Город</h2>
+                <form id="addCityForm" novalidate>
+                    <fieldset>
+                        <legend>Данные Города</legend>
+                        <input type="text" id="addCityName" placeholder="Название Города" required>
+                        <button type="submit">Добавить</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- Модальное окно для обновления -->
+            <div class="modal" id="updateCityModal" role="dialog" aria-labelledby="updateCityModalTitle" aria-modal="true">
+                <span onclick="closeModal('updateCityModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="updateCityModalTitle">Изменить Город</h2>
+                <div id="step1_city">
+                    <form id="fetchCityForm" novalidate>
+                        <input type="number" id="fetchCityId" placeholder="Введите ID Города" required>
+                        <button type="submit">Загрузить данные</button>
+                    </form>
+                </div>
+                <div id="step2_city" style="display: none;">
+                    <form id="updateCityForm" novalidate>
+                        <fieldset>
+                            <legend>Данные Города</legend>
+                            <input type="text" id="updateCityName" placeholder="Название Города" required>
+                            <button type="submit">Обновить</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Модальное окно для удаления -->
+            <div class="modal" id="deleteCityModal" role="dialog" aria-labelledby="deleteCityModalTitle" aria-modal="true">
+                <span onclick="closeModal('deleteCityModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="deleteCityModalTitle">Удалить Город</h2>
+                <form id="deleteCityForm" novalidate>
+                    <input type="number" id="deleteCityId" placeholder="ID Города" required>
+                    <button type="submit">Удалить</button>
+                </form>
+            </div>
+        </section>
+
+        <!--Секция УЛИЦ-->
+
+        <section class="section" id="streetSection" aria-labelledby="streetSectionTitle">
+            <header>
+                <h2 id="streetSectionTitle">Улицы</h2>
+            </header>
+            <div class="buttons">
+                <button id="addStreetButton" onclick="openModal('addStreetModal')" aria-label="Добавить Улицу">Добавить</button>
+                <button id="updateStreetButton" onclick="openModal('updateStreetModal')" aria-label="Обновить Улицу">Обновить</button>
+                <button id="deleteStreetButton" onclick="openModal('deleteStreetModal')" aria-label="Удалить Улицу">Удалить</button>
+                <button id="searchStreetButton" aria-label="Поиск Улицы">Поиск</button>
+                <input class="input_butt" type="text" id="searchStreetInput" placeholder="Введите текст для поиска" aria-label="Поиск">
+            </div>
+            <table class="table-bd" id="streetTable" aria-describedby="streetTableDesc">
+                <thead>
+                <tr>
+                    <th class="sortable" data-column="0" data-order="asc">ID</th>
+                    <th class="sortable" data-column="1" data-order="asc">Название Улицы</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Данные улиц будут загружены здесь -->
+                </tbody>
+            </table>
+
+            <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+            <!-- Модальное окно для добавления -->
+            <div class="modal" id="addStreetModal" role="dialog" aria-labelledby="addStreetModalTitle" aria-modal="true">
+                <span onclick="closeModal('addStreetModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="addStreetModalTitle">Добавить Улицу</h2>
+                <form id="addStreetForm" novalidate>
+                    <fieldset>
+                        <legend>Данные Улицы</legend>
+                        <input type="text" id="addStreetName" placeholder="Название Улицы" required>
+                        <button type="submit">Добавить</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- Модальное окно для обновления -->
+            <div class="modal" id="updateStreetModal" role="dialog" aria-labelledby="updateStreetModalTitle" aria-modal="true">
+                <span onclick="closeModal('updateStreetModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="updateStreetModalTitle">Изменить Улицу</h2>
+                <div id="step1_street">
+                    <form id="fetchStreetForm" novalidate>
+                        <input type="number" id="fetchStreetId" placeholder="Введите ID Улицы" required>
+                        <button type="submit">Загрузить данные</button>
+                    </form>
+                </div>
+                <div id="step2_street" style="display: none;">
+                    <form id="updateStreetForm" novalidate>
+                        <fieldset>
+                            <legend>Данные Улицы</legend>
+                            <input type="text" id="updateStreetName" placeholder="Название Улицы" required>
+                            <button type="submit">Обновить</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Модальное окно для удаления -->
+            <div class="modal" id="deleteStreetModal" role="dialog" aria-labelledby="deleteStreetModalTitle" aria-modal="true">
+                <span onclick="closeModal('deleteStreetModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="deleteStreetModalTitle">Удалить Улицу</h2>
+                <form id="deleteStreetForm" novalidate>
+                    <input type="number" id="deleteStreetId" placeholder="ID Улицы" required>
+                    <button type="submit">Удалить</button>
+                </form>
+            </div>
+        </section>
+
+        <!--Секция Поставщиков-->
+        <section class="section" id="supplierSection" aria-labelledby="supplierSectionTitle">
+            <header>
+                <h2 id="supplierSectionTitle">Поставщики</h2>
+            </header>
+            <div class="buttons">
+                <button id="addSupplierButton" onclick="openModal('addSupplierModal')" aria-label="Добавить Поставщика">Добавить</button>
+                <button id="updateSupplierButton" onclick="openModal('updateSupplierModal')" aria-label="Обновить Поставщика">Обновить</button>
+                <button id="deleteSupplierButton" onclick="openModal('deleteSupplierModal')" aria-label="Удалить Поставщика">Удалить</button>
+                <button id="searchSupplierButton" aria-label="Поиск Поставщика">Поиск</button>
+                <input class="input_butt" type="text" id="searchSupplierInput" placeholder="Введите текст для поиска" aria-label="Поиск">
+            </div>
+            <table class="table-bd" id="supplierTable" aria-describedby="supplierTableDesc">
+                <thead>
+                <tr>
+                    <th class="sortable" data-column="0" data-order="asc">ID</th>
+                    <th class="sortable" data-column="1" data-order="asc">Полное Имя</th>
+                    <th class="sortable" data-column="2" data-order="asc">ИНН</th>
+                    <th class="sortable" data-column="3" data-order="asc">Номер Дома</th>
+                    <th class="sortable" data-column="4" data-order="asc">Банковский Аккаунт</th>
+                    <th class="sortable" data-column="5" data-order="asc">Банк</th>
+                    <th class="sortable" data-column="5" data-order="asc">Улица</th>
+                    <th class="sortable" data-column="5" data-order="asc">Город</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Данные поставщиков будут загружены здесь -->
+                </tbody>
+            </table>
+
+            <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+            <!-- Модальное окно для добавления -->
+            <div class="modal" id="addSupplierModal" role="dialog" aria-labelledby="addSupplierModalTitle" aria-modal="true">
+                <span onclick="closeModal('addSupplierModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="addSupplierModalTitle">Добавить Поставщика</h2>
+                <form id="addSupplierForm" novalidate>
+                    <fieldset>
+                        <legend>Данные Поставщика</legend>
+                        <input type="text" id="addFirstName" placeholder="Имя" required>
+                        <input type="text" id="addLastName" placeholder="Фамилия" required>
+                        <input type="text" id="addSurname" placeholder="Отчество" required>
+                        <input type="text" id="addDocumentInn" placeholder="ИНН" required>
+                        <input type="text" id="addNumberOfHouse" placeholder="Номер Дома" required>
+                        <input type="text" id="addBankAccount" placeholder="Банковский Аккаунт" required>
+                        <input type="number" id="addBankId" placeholder="ID Банка" required>
+                        <input type="number" id="addStreetId" placeholder="ID Улицы" required>
+                        <input type="number" id="addCityId" placeholder="ID Города" required>
+                        <button type="submit">Добавить</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- Модальное окно для обновления -->
+            <div class="modal" id="updateSupplierModal" role="dialog" aria-labelledby="updateSupplierModalTitle" aria-modal="true">
+                <span onclick="closeModal('updateSupplierModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="updateSupplierModalTitle">Изменить Поставщика</h2>
+                <div id="step1_supplier">
+                    <form id="fetchSupplierForm" novalidate>
+                        <input type="number" id="fetchSupplierId" placeholder="Введите ID Поставщика" required>
+                        <button type="submit">Загрузить данные</button>
+                    </form>
+                </div>
+                <div id="step2_supplier" style="display: none;">
+                    <form id="updateSupplierForm" novalidate>
+                        <fieldset>
+                            <legend>Данные Поставщика</legend>
+                            <input type="text" id="updateFirstName" placeholder="Имя" required>
+                            <input type="text" id="updateLastName" placeholder="Фамилия" required>
+                            <input type="text" id="updateSurname" placeholder="Отчество" required>
+                            <input type="text" id="updateDocumentInn" placeholder="ИНН" required>
+                            <input type="text" id="updateNumberOfHouse" placeholder="Номер Дома" required>
+                            <input type="text" id="updateBankAccount" placeholder="Банковский Аккаунт" required>
+                            <input type="number" id="updateBankId" placeholder="ID Банка" required>
+                            <input type="number" id="updateStreetId" placeholder="ID Улицы" required>
+                            <input type="number" id="updateCityId" placeholder="ID Города" required>
+                            <button type="submit">Обновить</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Модальное окно для удаления -->
+            <div class="modal" id="deleteSupplierModal" role="dialog" aria-labelledby="deleteSupplierModalTitle" aria-modal="true">
+                <span onclick="closeModal('deleteSupplierModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="deleteSupplierModalTitle">Удалить Поставщика</h2>
+                <form id="deleteSupplierForm" novalidate>
+                    <input type="number" id="deleteSupplierId" placeholder="ID Поставщика" required>
+                    <button type="submit">Удалить</button>
+                </form>
+            </div>
+        </section>
+
+        <!--Секция Поставок-->
+        <section class="section" id="supplySection" aria-labelledby="supplySectionTitle">
+            <header>
+                <h2 id="supplySectionTitle">Поставки</h2>
+            </header>
+            <div class="buttons">
+                <button id="addSupplyButton" onclick="openModal('addSupplyModal')" aria-label="Добавить Поставку">Добавить</button>
+                <button id="updateSupplyButton" onclick="openModal('updateSupplyModal')" aria-label="Обновить Поставку">Обновить</button>
+                <button id="deleteSupplyButton" onclick="openModal('deleteSupplyModal')" aria-label="Удалить Поставку">Удалить</button>
+                <button id="searchSupplyButton" aria-label="Поиск Поставки">Поиск</button>
+                <input class="input_butt" type="text" id="searchSupplyInput" placeholder="Введите текст для поиска" aria-label="Поиск">
+            </div>
+            <table class="table-bd" id="supplyTable" aria-describedby="supplyTableDesc">
+                <thead>
+                <tr>
+                    <th class="sortable" data-column="0" data-order="asc">ID</th>
+                    <th class="sortable" data-column="1" data-order="asc">Дата Поставки</th>
+                    <th class="sortable" data-column="2" data-order="asc">Цена Покупки</th>
+                    <th class="sortable" data-column="4" data-order="asc">Поставщик</th>
+                    <th class="sortable" data-column="3" data-order="asc">ID Поставщика</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Данные поставок будут загружены здесь -->
+                </tbody>
+            </table>
+
+            <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+            <!-- Модальное окно для добавления -->
+            <div class="modal" id="addSupplyModal" role="dialog" aria-labelledby="addSupplyModalTitle" aria-modal="true">
+                <span onclick="closeModal('addSupplyModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="addSupplyModalTitle">Добавить Поставку</h2>
+                <form id="addSupplyForm" novalidate>
+                    <fieldset>
+                        <legend>Данные Поставки</legend>
+                        <input type="date" id="addDateOfSupply" required>
+                        <input type="number" id="addPurchasePrice" placeholder="Цена Покупки" required>
+                        <input type="number" id="addSupplierId" placeholder="ID Поставщика" required>
+                        <button type="submit">Добавить</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- Модальное окно для обновления -->
+            <div class="modal" id="updateSupplyModal" role="dialog" aria-labelledby="updateSupplyModalTitle" aria-modal="true">
+                <span onclick="closeModal('updateSupplyModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="updateSupplyModalTitle">Изменить Поставку</h2>
+                <div id="step1_supply">
+                    <form id="fetchSupplyForm" novalidate>
+                        <input type="number" id="fetchSupplyId" placeholder="Введите ID Поставки" required>
+                        <button type="submit">Загрузить данные</button>
+                    </form>
+                </div>
+                <div id="step2_supply" style="display: none;">
+                    <form id="updateSupplyForm" novalidate>
+                        <fieldset>
+                            <legend>Данные Поставки</legend>
+                            <input type="date" id="updateDateOfSupply" required>
+                            <input type="number" id="updatePurchasePrice" placeholder="Цена Покупки" required>
+                            <input type="number" id="updateSupplierId" placeholder="ID Поставщика" required>
+                            <button type="submit">Обновить</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Модальное окно для удаления -->
+            <div class="modal" id="deleteSupplyModal" role="dialog" aria-labelledby="deleteSupplyModalTitle" aria-modal="true">
+                <span onclick="closeModal('deleteSupplyModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="deleteSupplyModalTitle">Удалить Поставку</h2>
+                <form id="deleteSupplyForm" novalidate>
+                    <input type="number" id="deleteSupplyId" placeholder="ID Поставки" required>
+                    <button type="submit">Удалить</button>
+                </form>
+            </div>
+        </section>
+
+        <!--СЕКЦИЯ Юрид.ЛИЦ-->
+        <section class="section" id="legalSection" aria-labelledby="legalSectionTitle">
+            <header>
+                <h2 id="legalSectionTitle">Юрид. Лица</h2>
+            </header>
+            <div class="buttons">
+                <button id="addLegalButton" onclick="openModal('addLegalModal')" aria-label="Добавить Юрид.Лицо">Добавить</button>
+                <button id="updateLegalButton" onclick="openModal('updateLegalModal')" aria-label="Обновить Юрид.Лицо">Обновить</button>
+                <button id="deleteLegalButton" onclick="openModal('deleteLegalModal')" aria-label="Удалить Юрид.Лицо">Удалить</button>
+                <button id="searchLegalButton" aria-label="Поиск Юрид.Лица">Поиск</button>
+                <input class="input_butt" type="text" id="searchLegalInput" placeholder="Введите текст для поиска" aria-label="Поиск">
+            </div>
+            <table class="table-bd" id="legalTable" aria-describedby="legalTableDesc">
+                <thead>
+                <tr>
+                    <th class="sortable" data-column="0" data-order="asc">ID</th>
+                    <th class="sortable" data-column="1" data-order="asc">Компания</th>
+                    <th class="sortable" data-column="2" data-order="asc">Имя</th>
+                    <th class="sortable" data-column="3" data-order="asc">Фамилия</th>
+                    <th class="sortable" data-column="4" data-order="asc">Отчество</th>
+                    <th class="sortable" data-column="5" data-order="asc">Номер дома</th>
+                    <th class="sortable" data-column="6" data-order="asc">Номер карты</th>
+                    <th class="sortable" data-column="7" data-order="asc">ИНН</th>
+                    <th class="sortable" data-column="8" data-order="asc">Банк</th>
+                    <th class="sortable" data-column="9" data-order="asc">Город</th>
+                    <th class="sortable" data-column="10" data-order="asc">Улица</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Данные клиентов будут загружены здесь -->
+                </tbody>
+            </table>
+
+            <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+            <!-- Модальное окно для добавления -->
+            <div class="modal" id="addLegalModal" role="dialog" aria-labelledby="addLegalModalTitle" aria-modal="true">
+                <span onclick="closeModal('addLegalModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="addLegalModalTitle">Добавить Юрид.Лицо</h2>
+                <form id="addLegalForm" novalidate>
+                    <fieldset>
+                        <legend>Данные Юрид.Лица</legend>
+                        <input type="text" id="addCompanyName" placeholder="Компания" required value="ООО Обнал" >
+                        <input type="text" id="addFirstname" placeholder="Имя" required>
+                        <input type="text" id="addLastname" placeholder="Фамилия">
+                        <input type="text" id="addSurname" placeholder="Отчество" required>
+                        <input type="text" id="addNumberOfHouse" placeholder="Номер дома" required>
+                        <input type="text" id="addBankAccount" placeholder="Номер карты" required>
+                        <input type="text" id="addDocumentInn" placeholder="ИНН" required>
+                        <input type="text" id="addBankId" placeholder="Id Банка" required>
+                        <input type="text" id="addStreetId" placeholder="Id Улицы" required>
+                        <input type="text" id="addCityId" placeholder="Id Города" required>
+
+                        <button type="submit">Добавить</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- Модальное окно для обновления -->
+            <div class="modal" id="updateLegalModal" role="dialog" aria-labelledby="updateLegalModalTitle" aria-modal="true">
+                <span onclick="closeModal('updateLegalModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="updateLegalModalTitle">Изменить Юрид.Лицо</h2>
+                <div id="step1_legal">
+                    <form id="fetchLegalForm" novalidate>
+                        <input type="number" id="fetchLegalId" placeholder="Введите ID Юрид.Лица" required>
+                        <button type="submit">Загрузить данные</button>
+                    </form>
+                </div>
+                <div id="step2_legal" style="display: none;">
+                    <form id="updateLegalForm" novalidate>
+                        <fieldset>
+                            <legend>Юридическое лицо</legend>
+                            <input type="text" id="updateCompanyName" placeholder="Компания" required>
+                            <input type="text" id="updateFirstname" placeholder="Имя" required>
+                            <input type="text" id="updateLastname" placeholder="Фамилия">
+                            <input type="text" id="updateSurname" placeholder="Отчество" required>
+                            <input type="text" id="updateNumberOfHouse" placeholder="Номер дома" required>
+                            <input type="text" id="updateBankAccount" placeholder="Номер карты" required>
+                            <input type="text" id="updateDocumentInn" placeholder="ИНН" required>
+                            <input type="text" id="updateBankId" placeholder="Id Банка" required>
+                            <input type="text" id="updateStreetId" placeholder="Id Улицы" required>
+                            <input type="text" id="updateCityId" placeholder="Id Города" required>
+
+                            <button type="submit">Обновить</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Модальное окно для удаления -->
+            <div class="modal" id="deleteLegalModal" role="dialog" aria-labelledby="deleteLegalModalTitle" aria-modal="true">
+                <span onclick="closeModal('deleteLegalModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="deleteLegalModalTitle">Удалить Юрид.Лицо</h2>
+                <form id="deleteLegalForm" novalidate>
+                    <input type="number" id="deleteLegalId" placeholder="ID Юрид.Лица" required>
+                    <button type="submit">Удалить</button>
+                </form>
+            </div>
+        </section>
+
+
+        <!--СЕКЦИЯ Физ.ЛИЦ-->
+        <section class="section active" id="individualSection" aria-labelledby="individualSectionTitle">
+            <header>
+                <h2 id="individualSectionTitle">Физ лица</h2>
+            </header>
+            <div class="buttons">
+                <button id="addIndividualButton" onclick="openModal('addIndividualModal')"  aria-label="Добавить Физ.Лицо">Добавить</button>
+                <button id="updateIndividualButton" onclick="openModal('updateIndividualModal')" aria-label="Обновить Физ.Лицо">Обновить</button>
+                <button id="deleteIndividualButton" onclick="openModal('deleteIndividualModal')" aria-label="Удалить Физ.лицо">Удалить</button>
+                <button id="searchIndividualButton" aria-label="Поиск Физ.Лица">Поиск</button>
+                <input class="input_butt" type="text" id="searchIndividualInput" placeholder="Введите текст для поиска" aria-label="Поиск">
+            </div>
+            <table class="table-bd" id="individualTable" aria-describedby="individualTableDesc">
+
+                <thead>
+                <tr>
+                    <th class="sortable"  data-column="0" data-order="asc">ID</th>
+                    <th class="sortable"  data-column="1" data-order="asc">Имя</th>
+                    <th class="sortable"  data-column="2" data-order="asc">Фамилия</th>
+                    <th class="sortable"  data-column="3" data-order="asc">Отчество</th>
+                    <th class="sortable"  data-column="4" data-order="asc">Номер телефона</th>
+                    <th class="sortable"  data-column="5" data-order="asc">Серия паспорта</th>
+                    <th class="sortable"  data-column="6" data-order="asc">Номер паспорта</th>
+                    <th class="sortable"  data-column="7" data-order="asc">Дата выдачи</th>
+                    <th class="sortable"  data-column="8" data-order="asc">Кем выдан</th>
+                    <th class="sortable"  data-column="9" data-order="asc">Город</th>
+                    <th class="sortable"  data-column="10" data-order="asc">Улица</th>
+                    <th class="sortable"  data-column="11" data-order="asc">Номер карты</th>
+                    <th class="sortable"  data-column="12" data-order="asc">Дом</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Данные клиентов будут загружены здесь -->
+                </tbody>
+            </table>
+
+            <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+            <!-- Модальное окно для добавления -->
+            <div class="modal" id="addIndividualModal" role="dialog" aria-labelledby="addModalTitle" aria-modal="true">
+                <span onclick="closeModal('addIndividualModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="addModalTitle">Добавить Физ.Лицо</h2>
+                <form id="addIndividualForm" novalidate>
+                    <fieldset>
+                        <legend>Данные Физ.Лица</legend>
+                        <input type="text" id="addFirstname" placeholder="Имя" required>
+                        <input type="text" id="addLastname" placeholder="Фамилия">
+                        <input type="text" id="addSurname" placeholder="Отчество" required>
+                        <input type="text" id="addPhoneNumber" placeholder="Номер телефона" required>
+                        <input type="text" id="addPassportSeries" placeholder="Серия паспорта" required>
+                        <input type="text" id="addPassportNumber" placeholder="Номер паспорта" required>
+                        <input type="date" id="addPassportIssueDate" placeholder="Дата выдачи" required>
+                        <input type="text" id="addWhoIssuedThePassport" placeholder="Кем выдан" required>
+                        <input type="text" id="addCityId" placeholder="Id Города" required>
+                        <input type="text" id="addStreetId" placeholder="Id Улицы" required>
+                        <input type="text" id="addBankAccount" placeholder="Номер карты" required>
+                        <input type="text" id="addNumberOfHouse" placeholder="Номер дома" required>
+
+                        <button type="submit">Добавить</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- Модальное окно для обновления -->
+            <div class="modal" id="updateIndividualModal" role="dialog" aria-labelledby="updateIndividualModalTitle" aria-modal="true">
+                <span onclick="closeModal('updateIndividualModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="updateIndividualModalTitle">Изменить Физ.Лицо</h2>
+                <div id="step1_individuals">
+                    <form id="fetchIndividualForm" novalidate>
+                        <input type="number" id="fetchIndividualId" placeholder="Введите ID Физ.Лица" required>
+                        <button type="submit">Загрузить данные</button>
+                    </form>
+                </div>
+                <div id="step2_individuals" style="display: none;">
+                    <form id="updateIndividualForm" novalidate>
+                        <fieldset>
+                            <legend>Физ лицо</legend>
+                            <input type="text" id="updateFirstname" placeholder="Имя" required>
+                            <input type="text" id="updateLastname" placeholder="Фамилия">
+                            <input type="text" id="updateSurname" placeholder="Отчество" required>
+                            <input type="text" id="updatePhoneNumber" placeholder="Номер телефона" required>
+                            <input type="text" id="updatePassportSeries" placeholder="Серия паспорта" required>
+                            <input type="text" id="updatePassportNumber" placeholder="Номер паспорта" required>
+                            <input type="text" id="updatePassportIssueDate" placeholder="Дата выдачи" required>
+                            <input type="text" id="updateWhoIssuedThePassport" placeholder="Кем выдан" required>
+                            <input type="text" id="updateCityId" placeholder="Id Города" required>
+                            <input type="text" id="updateStreetId" placeholder="Id Улицы" required>
+                            <input type="text" id="updateBankAccount" placeholder="Номер карты" required>
+                            <input type="text" id="updateNumberOfHouse" placeholder="Номер дома" required>
+                            <button type="submit">Обновить</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Модальное окно для удаления -->
+            <div class="modal" id="deleteIndividualModal" role="dialog" aria-labelledby="deleteModalTitle" aria-modal="true">
+                <span onclick="closeModal('deleteIndividualModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="deleteModalTitle">Удалить книгу</h2>
+                <form id="deleteIndividualForm" novalidate>
+                    <input type="number" id="deleteIndividualId" placeholder="ID Физ.Лица" required>
+                    <button type="submit">Удалить</button>
+                </form>
+            </div>
+        </section>
+
+        <!--СЕКЦИЯ ЗАКАЗОВ-->
+        <section class="section active" id="orderSection" aria-labelledby="orderSectionTitle">
+            <header>
+                <h2 id="orderSectionTitle">Заказы</h2>
+            </header>
+            <div class="buttons">
+                <button id="addOrderButton" onclick="openModal('addOrderModal')"  aria-label="Добавить заказ">Добавить</button>
+                <button id="updateOrderButton" onclick="openModal('updateOrderModal')" aria-label="Обновить заказ">Обновить</button>
+                <button id="deleteOrderButton" onclick="openModal('deleteOrderModal')" aria-label="Удалить заказ">Удалить</button>
+                <button id="searchOrderButton" aria-label="Поиск заказа">Поиск</button>
+                <input class="input_butt" type="text" id="searchOrderInput" placeholder="Введите текст для поиска" style="display: none;" aria-label="Поиск">
+            </div>
+
+            <table class="table-bd" id="orderTable" aria-describedby="bookTableDesc">
+
+                <thead>
+                <tr>
+                    <th class="sortable"  data-column="0" data-order="asc">ID</th>
+                    <th class="sortable"  data-column="1" data-order="asc">Номер заказа</th>
+                    <th class="sortable"  data-column="2" data-order="asc">Дата заказа</th>
+                    <th class="sortable"  data-column="3" data-order="asc">Сумма к оплате</th>
+                    <th class="sortable"  data-column="4" data-order="asc">ID Физ лица</th>
+                    <th class="sortable"  data-column="5" data-order="asc">ID Юр лица</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Данные клиентов будут загружены здесь -->
+                </tbody>
+            </table>
+
+            <!--    <div class="overlay" id="overlay" aria-hidden="true"></div>-->
+
+            <!-- Модальное окно для добавления -->
+            <div class="modal" id="addOrderModal" role="dialog" aria-labelledby="addModalTitle" aria-modal="true">
+                <span onclick="closeModal('addOrderModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="addOrderTitle">Добавить заказ</h2>
+                <form id="addOrderForm" novalidate>
+                    <fieldset>
+                        <legend>Данные заказа</legend>
+                        <input type="text" id="addNumberOfOrder" placeholder="Номер заказа" required value="ORD-0000">
+                        <input type="date" id="addDateOfOrder" placeholder="Дата заказа" required>
+                        <input type="text" id="addSumToPay" placeholder="Сумма к оплате" value="200">
+                        <input type="text" id="addIndividualId" placeholder="Id Физ лица" required>
+                        <input type="text" id="addLegalCustomerId" placeholder="Id Юр лица" required>
+                        <button type="submit">Добавить</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- Модальное окно для обновления -->
+            <div class="modal" id="updateOrderModal" role="dialog" aria-labelledby="updateOrderModalTitle" aria-modal="true">
+                <span onclick="closeModal('updateOrderModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="updateOrderModalTitle">Изменить Заказ</h2>
+                <div id="step1_orders">
+                    <form id="fetchOrderForm" novalidate>
+                        <input type="number" id="fetchOrderId" placeholder="Введите ID Книги" required>
+                        <button type="submit">Загрузить данные</button>
+                    </form>
+                </div>
+                <div id="step2_orders" style="display: none;">
+                    <form id="updateOrderForm" novalidate>
+                        <fieldset>
+                            <legend>Книга</legend>
+                            <input type="text" id="updateNumberOfOrder" placeholder="Номер заказа">
+                            <input type="text" id="updateDateOfOrder" placeholder="Дата заказа">
+                            <input type="text" id="updateSumToPay" placeholder="Сумма к оплате">
+                            <input type="text" id="updateIndividualId" placeholder="Id Физ лица">
+                            <input type="text" id="updateLegalCustomerId" placeholder="Id Юр лица">
+                            <button type="submit">Обновить</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Модальное окно для удаления -->
+            <div class="modal" id="deleteOrderModal" role="dialog" aria-labelledby="deleteModalTitle" aria-modal="true">
+                <span onclick="closeModal('deleteOrderModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="deleteOrderTitle">Удалить заказ</h2>
+                <form id="deleteOrderForm" novalidate>
+                    <input type="number" id="deleteOrderId" placeholder="ID заказа" required>
+                    <button type="submit">Удалить</button>
+                </form>
+            </div>
+        </section>
+
+        <!--CЕКЦИЯ КНИГ-->
+        <section class="section active" id="bookSection" aria-labelledby="bookSectionTitle">
+            <header>
+                <h2 id="bookSectionTitle">Книги</h2>
+            </header>
+            <div class="buttons">
+                <button id="addBookButton" onclick="openModal('addBookModal')"  aria-label="Добавить книгу">Добавить</button>
+                <button id="updateBookButton" onclick="openModal('updateBookModal')" aria-label="Обновить книгу">Обновить</button>
+                <button id="deleteBookButton" onclick="openModal('deleteBookModal')" aria-label="Удалить книгу">Удалить</button>
+                <button id="searchBookButton" aria-label="Поиск книги">Поиск</button>
+                <input class="input_butt" type="text" id="searchBookInput" placeholder="Введите текст для поиска" aria-label="Поиск">
+            </div>
+            <table class="table-bd" id="bookTable" aria-describedby="bookTableDesc">
+
+                <thead>
+                <tr>
+                    <th class="sortable"  data-column="0" data-order="asc">ID</th>
+                    <th class="sortable"  data-column="1" data-order="asc">Название</th>
+                    <th class="sortable"  data-column="2" data-order="asc">Год публикации</th>
+                    <th class="sortable"  data-column="3" data-order="asc">Количество страниц</th>
+                    <th class="sortable"  data-column="4" data-order="asc">Издательство</th>
+                    <th class="sortable"  data-column="5" data-order="asc">Номер Поставки</th>
+                    <th class="sortable"  data-column="6" data-order="asc">Цена</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Данные клиентов будут загружены здесь -->
+                </tbody>
+            </table>
+
+            <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+            <!-- Модальное окно для добавления -->
+            <div class="modal" id="addBookModal" role="dialog" aria-labelledby="addModalTitle" aria-modal="true">
+                <span onclick="closeModal('addBookModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="addModalTitle">Добавить Книгу</h2>
+                <form id="addBookForm" novalidate>
+                    <fieldset>
+                        <legend>Данные Книги</legend>
+                        <input type="text" id="addBookTittle" placeholder="Название книги" required>
+                        <input type="text" id="addYearOfPublication" placeholder="Год выпуска" required value="2000">
+                        <input type="text" id="addNumberOfPages" placeholder="Количество страниц">
+                        <input type="text" id="addPublishingHouseID" placeholder="Id Издательства" required>
+                        <input type="text" id="addSupplyID" placeholder="Id Поставки" required>
+                        <input type="text" id="addPrice" placeholder="Цена" required value="200">
+                        <button type="submit">Добавить</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- Модальное окно для обновления -->
+            <div class="modal" id="updateBookModal" role="dialog" aria-labelledby="updateBookModalTitle" aria-modal="true">
+                <span onclick="closeModal('updateBookModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="updateBookModalTitle">Изменить книгу</h2>
+                <div id="step1_books">
+                    <form id="fetchBookForm" novalidate>
+                        <input type="number" id="fetchBookId" placeholder="Введите ID Книги" required>
+                        <button type="submit">Загрузить данные</button>
+                    </form>
+                </div>
+                <div id="step2_books" style="display: none;">
+                    <form id="updateBookForm" novalidate>
+                        <fieldset>
+                            <legend>Книга</legend>
+                            <input type="text" id="updateBookTittle" placeholder="Название">
+                            <input type="text" id="updateYearOfPublication" placeholder="Год издания">
+                            <input type="text" id="updateNumberOfPages" placeholder="Количество страниц">
+                            <input type="text" id="updatePublishingHouseID">
+                            <input type="text" id="updateSupplyID" placeholder="Id поставки">
+                            <input type="text" id="updatePrice" placeholder="Цена">
+                            <button type="submit">Обновить</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Модальное окно для удаления -->
+            <div class="modal" id="deleteBookModal" role="dialog" aria-labelledby="deleteModalTitle" aria-modal="true">
+                <span onclick="closeModal('deleteBookModal')" class="close" aria-label="Закрыть">&times;</span>
+                <h2 id="deleteModalTitle">Удалить книгу</h2>
+                <form id="deleteBookForm" novalidate>
+                    <input type="number" id="deleteBookId" placeholder="ID книги" required>
+                    <button type="submit">Удалить</button>
+                </form>
+            </div>
+        </section>
+
+        <!--Секция документов-->
+        <section class="section active" id="sqlConsoleSection" aria-labelledby="sqlConsoleSectionTitle">
+            <header>
+                <h2 id="sqlConsoleSectionTitle">SQL Консоль</h2>
+            </header>
+            <div class="sql-console">
+                <!-- Поле для ввода SQL-запроса -->
+                <textarea id="sqlQueryInput" rows="4" placeholder="Введите SQL запрос здесь"></textarea>
+
+                <!-- Кнопки с тестовыми запросами -->
+                <div class="sql-examples">
+                    <button onclick="setExampleQuery('SELECT * FROM book;')">Пример 1</button>
+                    <button onclick="setExampleQuery('SELECT * FROM orderfromclient;')">Пример 2</button>
+                    <button onclick="setExampleQuery('SELECT * FROM legalcustomer;')">Пример 3</button>
+                    <button onclick="downloadDocument()">Скачать таблицу</button>
+                </div>
+
+                <!-- Кнопка выполнения запроса -->
+                <button id="executeQueryButton" onclick="executeQuery()">Выполнить</button>
+
+                <!-- Таблица для отображения результатов -->
+                <table class="table-bd" id="sqlResultTable" aria-describedby="sqlResultTableDesc">
+                    <thead id="sqlResultTableHead">
+                    <!-- Заголовки таблицы будут обновляться динамически -->
+                    </thead>
+                    <tbody id="sqlResultTableBody">
+                    <!-- Результаты запроса будут загружены сюда -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="section active" id="spravkaSection" aria-labelledby="sqlConsoleSectionTitle">
+            <h2>Содержание</h2>
+            <p>
+                Данная программа представляет собой инструмент для управления данными и выполнения различных операций, связанных с обработкой информации.
+                Пользователь может использовать следующие основные функции:
+            </p>
+            <ul>
+                <li><strong>Создание новых записей:</strong> возможность добавления данных с помощью формы.</li>
+                <li><strong>Редактирование:</strong> изменение существующих данных через удобный интерфейс.</li>
+                <li><strong>Удаление:</strong> удаление ненужных или устаревших записей.</li>
+                <li><strong>Просмотр:</strong> отображение данных в табличной или другой удобной форме.</li>
+            </ul>
+            <p>
+                Для работы с программой необходимо следовать следующим шагам:
+            </p>
+            <ol>
+                <li>Запустите программу, Авторизируйтесь.</li>
+                <li>Выберите необходимую функцию в меню или на панели управления.</li>
+                <li>Выполните нужные действия, следуя подсказкам в интерфейсе.</li>
+            </ol>
+            <p>
+                Если возникнут вопросы или трудности при использовании, обратитесь к разработчику или руководству пользователя.
+            </p>
+        </section>
+        <!--Секция о программе -->
+        <section class="section" id="aboutSection" aria-labelledby="aboutSectionTitle">
+            <header>
+                <h2 id="aboutSectionTitle">О программе</h2>
+            </header>
+
+            <div class="about">
+                <p>
+                    Текущая версия приложения: <strong>6.6.6</strong>
+                </p>
+                <p>
+                    Это курсовой проект, разработанный <strong>Суриковым Александром Владимировичем</strong>, студентом группы <strong>АВТ-214</strong>.
+                </p>
+                <p>
+                    Проект выполнен по дисциплине <strong>Базы данных</strong>.
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="changePasswordSection" aria-labelledby="changePasswordTitle">
+            <form id="changePasswordForm">
+                <div>
+                    <label for="oldPassword">Старый пароль:</label>
+                    <input type="password" id="oldPassword" name="oldPassword" required>
+                </div>
+                <div>
+                    <label for="newPassword">Новый пароль:</label>
+                    <input type="password" id="newPassword" name="newPassword" required>
+                </div>
+                <button type="submit">Изменить пароль</button>
+            </form>
+
+            <div id="responseMessage"></div>
+        </section>
+        <section class="section" id="settingsSection" aria-labelledby="settingsSectionTitle">
+            <header>
+                <h2 id="settingsSectionTitle">Настройки</h2>
+            </header>
+            <div>
+                <label for="themeToggle">Переключить тему:</label>
+                <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+<!--                <span id="themeLabel">Светлая</span>-->
+            </div>
+        </section>
+        <script>
+            // Функция для обработки формы смены пароля
+            document.getElementById('changePasswordForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Предотвращаем перезагрузку страницы
+                const headElement = document.head;
+
+                // Получаем id элемента <head>
+                const username = headElement.id
+                const oldPassword = document.getElementById('oldPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+
+                const requestData = {
+                    username: username,
+                    oldPassword: oldPassword,
+                    newPassword: newPassword
+                };
+
+                fetch('/api/execute-sql/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Выводим результат
+                        document.getElementById('responseMessage').innerText = data.message;
+                    })
+                    .catch(error => {
+                        document.getElementById('responseMessage').innerText = 'Ошибка: ' + error.message;
+                    });
+            });
+        </script>
+        <script>
+            // Инициализация темы
+            function initializeTheme() {
+                const currentTheme = localStorage.getItem('theme') || 'light';
+                applyTheme(currentTheme);
+                document.getElementById('themeToggle').checked = currentTheme === 'dark';
+            }
+
+            // Применение темы
+            function applyTheme(theme) {
+                const body = document.body;
+                const sections = document.querySelectorAll('section.section');
+
+                if (theme === 'dark') {
+                    body.style.backgroundColor = '#333'; // Фон для body
+                    // body.style.color = '#f9f9f9'; // Цвет текста body
+                    sections.forEach(section => {
+                        section.style.backgroundColor = '#444'; // Фон для секций
+                        section.style.color = '#333'; // Цвет текста секций
+                    });
+                } else {
+                    body.style.backgroundColor = '#f0f0f0'; // Светлый фон для body
+                    // body.style.color = '#333'; // Тёмный текст для body
+                    sections.forEach(section => {
+                        section.style.backgroundColor = '#fff'; // Светлый фон для секций
+                        // section.style.color = '#333'; // Тёмный текст для секций
+                    });
+                }
+
+                // Сохранение темы в localStorage
+                localStorage.setItem('theme', theme);
+            }
+
+            // Переключение темы
+            function toggleTheme() {
+                const isDarkMode = document.getElementById('themeToggle').checked;
+                const theme = isDarkMode ? 'dark' : 'light';
+                applyTheme(theme);
+            }
+
+            // Вызов функции инициализации при загрузке страницы
+            window.onload = initializeTheme;
+        </script>
+
+    </div>
+</div>
+
+
+
+
+<script src="./js/HomePageFunctions.js?v=1"></script>
+<script src="./js/Books.js?v=1"></script>
+<script src="./js/Orders.js?v=1"></script>
+<script src="./js/Individuals.js?v=1"></script>
+<script src="./js/LegalCustomers.js?v=1"></script>
+<script src="./js/Supplies.js?v=1"></script>
+<script src="./js/Suppliers.js?v=1"></script>
+<script src="./js/Streets.js?v=1"></script>
+<script src="./js/Cities.js?v=1"></script>
+<script src="./js/Authors.js?v=1"></script>
+<script src="./js/PublishingHouses.js?v=1"></script>
+<script src="./js/Documents.js?v=1"></script>
+
+
+</body>
+</html>

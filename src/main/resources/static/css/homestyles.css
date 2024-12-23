@@ -1,0 +1,267 @@
+.authorized_User{
+    display: flex;
+    align-items: center;  /* Центрирование элементов по вертикали */
+    gap: 10px;
+    font-size: 12px;/* Расстояние между элементами */
+}
+.logout{
+    margin-left: auto;
+    margin-right: 1%;
+    background-color: silver;
+
+}
+nav {
+    background-color: silver;
+    color: white;
+    padding: 10px 15px;
+}
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+li {
+    display: inline-block;
+    position: relative;
+    margin-right: 15px;
+}
+li a {
+    color: black;
+    text-decoration: none;
+    /*padding: 5px 10px;*/
+}
+li ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #444;
+    padding: 10px;
+}
+.menu {
+    display: flex;
+    list-style-type: none;
+    background-color: silver;
+    padding: 10px;
+    margin: 0;
+}
+
+.menu > li {
+    position: relative;
+    margin-right: 20px;
+}
+
+.menu > li > a {
+    color: black;
+    text-decoration: none;
+    padding: 10px;
+    display: block;
+}
+
+.menu > li > a:hover {
+    background-color: transparent;
+}
+
+/* Скрытие подпунктов по умолчанию */
+.submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: silver;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.submenu li a {
+    padding: 10px;
+    color: black;
+    text-decoration: none;
+}
+
+.submenu li a:hover {
+    background-color: transparent;
+}
+
+/* Показываем подпункты при наведении */
+.menu > li:hover .submenu {
+    display: block;
+}
+
+/* Стили для элементов с подменю (например, "Клиенты") */
+.has-submenu > a::after {
+    content: ' ▼';
+}
+
+/* Настройка подменю с вложенными элементами */
+.submenu li .submenu {
+    left: 100%;
+    top: 0;
+}
+
+
+.section {
+    padding: 20px;
+    background-color: #f9f9f9;
+    display: none;
+}
+.buttons button {
+    background-color: #808080; /* Серый цвет кнопок */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin: 5px 5px 10px 0px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+.buttons button:hover {
+    background-color: #696969; /* Темнее при наведении */
+}
+#searchInput {
+    display: none;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 14px;
+}
+.section.active {
+    display: block;
+}
+.table-bd{
+    width: 100%; /* Растянуть таблицу на всю ширину */
+    border-collapse: collapse; /* Убрать двойные линии */
+    background-color: #d3d3d3; /* Светло-серый фон таблицы */
+}
+
+.table-bd caption {
+    text-align: left;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.table-bd th, .table-bd td {
+    border: 1px solid #b0b0b0; /* Границы ячеек */
+    padding: 10px;
+    text-align: left;
+    /*cursor: pointer; !* Указатель для сортируемых столбцов *!*/
+}
+
+.table-bd th {
+    background-color: #a9a9a9; /* Темно-серый фон для заголовков */
+    color: white;
+}
+
+.table-bd tr:nth-child(even) {
+    background-color: #e0e0e0; /* Светлый цвет для четных строк */
+}
+
+.table-bd tr:hover {
+    background-color: #c0c0c0; /* Серый при наведении */
+}
+
+
+.input_butt {
+    display: none;  /* По умолчанию скрыта */
+    width: 200px !important;  /* Ширина строки */
+    height: 25px !important; !important /* Высота строки */
+    padding: 0 15px !important; !important /* Внутренний отступ */
+    border: 1px solid #ccc !important;  /* Лёгкая граница */
+    margin-bottom: 5px !important;
+    border-radius: 20px !important; /* Закруглённые края */
+    background-color: #f5f5f5 !important; /* Серый цвет фона */
+    font-size: 16px !important; /* Увеличенный размер текста */
+    color: #333 !important; /* Тёмно-серый цвет текста */
+    outline: none !important; /* Убираем обводку при фокусе */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important; /* Небольшая тень */
+    transition: all 0.3s ease !important; /* Плавный переход эффектов */
+}
+
+.input_butt:focus {
+    background-color: #fff !important; /* Белый фон при фокусе */
+    border-color: #007bff !important; /* Синяя граница при фокусе */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important; /* Более выраженная тень */
+    color: #000 !important; /* Чёрный текст при фокусе */
+}
+
+
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #f8f9fa; /* Светло-серый цвет */
+    padding: 20px;
+    border: 1px solid #dee2e6; /* Серый бордер */
+    border-radius: 15px; /* Закругленные края */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25); /* Более мягкая тень */
+    z-index: 1000;
+    max-width: 400px; /* Ограничение по ширине */
+    width: 90%; /* Адаптация для маленьких экранов */
+}
+
+.modal.active {
+    display: block;
+}
+
+.modal h2 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+    color: #343a40; /* Темно-серый */
+}
+
+.modal input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    background-color: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.modal input:focus {
+    border-color: #495057; /* Акцентированный бордер при фокусе */
+    box-shadow: 0 0 5px rgba(73, 80, 87, 0.5);
+    outline: none;
+}
+
+.modal button {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    background-color: #007bff; /* Синий цвет */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal button:hover {
+    background-color: #0056b3; /* Более тёмный синий при наведении */
+}
+
+.modal .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    color: #6c757d; /* Серый цвет */
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal .close:hover {
+    color: #343a40; /* Темнее при наведении */
+}
